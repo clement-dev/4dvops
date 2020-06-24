@@ -1,6 +1,6 @@
 ## Prérequis:
 installer docker
-avoir le télécharger le dossier "tools"
+avoir le télécharger le dossier "tools" ( ou a minima le docker-compose de GITLAB )
 
 ## installation de docker-compose
 sudo curl -L "https://github.com/docker/compose/releases/download/1.25.5/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
