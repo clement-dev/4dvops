@@ -1,0 +1,3 @@
+---
+runner_container_name: my-runner
+runner_container_image: gitlab/gitlab-runner

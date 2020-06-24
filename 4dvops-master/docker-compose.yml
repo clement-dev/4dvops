@@ -1,0 +1,15 @@
+version: '3.7'
+services:
+
+  api:
+    hostname: api
+    build:
+      context: ./simple_api
+      dockerfile: ./Dockerfile
+    image: "supinfo/simple_api:0.0.1"
+    container_name: "api"
+    volumes:
+      - ./simple_api/student_age.json:/data/student_age.json
+    ports:
+      - 5000:5000
+ 

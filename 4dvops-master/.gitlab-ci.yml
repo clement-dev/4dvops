@@ -1,0 +1,52 @@
+image: docker:latest
+
+services:
+  - docker:dind
+  
+variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+    CONTAINER_IMAGE: "supinfo/simple_api"
+
+#########################################
+########          JOBS          #########
+#########################################
+
+stages:
+    - test
+    - release
+
+before_script:
+    - echo "Connecting to docker and heroku registry"
+    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+    - docker login -u _ -p $HEROKU_API_KEY registry.heroku.com
+    
+release-staging:
+    type: deploy
+    stage: release
+    script:
+    - echo "Start releasing for staging environnement"
+    - docker build -f simple_api/Dockerfile -t $CONTAINER_IMAGE:staging . 
+    - docker tag $CONTAINER_IMAGE:staging registry.heroku.com/$HEROKU_APP_STAGING/web
+    - docker push registry.heroku.com/$HEROKU_APP_STAGING/web
+    - docker run --rm -e HEROKU_API_KEY=$HEROKU_API_KEY wingrunr21/alpine-heroku-cli container:release web --app $HEROKU_APP_STAGING
+    only:
+    - staging
+    
+release-prod:
+    stage: release
+    script:
+    - echo "Start releasing for production environnement"
+    - docker build -f simple_api/Dockerfile -t $CONTAINER_IMAGE:stable . 
+    - docker tag $CONTAINER_IMAGE:stable registry.heroku.com/$HEROKU_APP_PRODUCTION/web
+    - docker push registry.heroku.com/$HEROKU_APP_PRODUCTION/web
+    - docker run --rm -e HEROKU_API_KEY=$HEROKU_API_KEY wingrunr21/alpine-heroku-cli container:release web --app $HEROKU_APP_PRODUCTION
+    only:
+    - master
+
+test:
+  stage: test
+  script:
+    - docker build -f simple_api/Dockerfile.test . 
+
+
