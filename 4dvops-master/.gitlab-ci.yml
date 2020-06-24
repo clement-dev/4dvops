@@ -22,7 +22,6 @@ before_script:
     - docker login -u _ -p $HEROKU_API_KEY registry.heroku.com
     
 release-staging:
-    type: deploy
     stage: release
     script:
     - echo "Start releasing for staging environnement"
